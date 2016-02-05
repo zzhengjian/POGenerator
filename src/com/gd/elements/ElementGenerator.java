@@ -43,7 +43,7 @@ public class ElementGenerator {
 		{
 			if(e.isDisplayed())
 			{
-				System.out.println(e.getTagName() + " : " +  e.getText());
+				//System.out.println(e.getTagName() + " : " +  e.getText());
 				Response response = null;
 				String selector = "";
 				Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));

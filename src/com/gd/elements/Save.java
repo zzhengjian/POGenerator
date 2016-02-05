@@ -36,7 +36,7 @@ public class Save {
 			else
 				pageStream.append("		:desktopcss => \"").append(selector).append("\"");
 			
-			if(ele.getDefaultValues().containsKey("text") && ele.getDefaultValues().get("text") !=null )
+			if(ele.getDefaultValues() !=null && ele.getDefaultValues().containsKey("text") && ele.getDefaultValues().get("text") !=null )
 			{
 				pageStream.append(",\n").append("		:text => \"").append(Utils.EscapeQuate(ele.getDefaultValues().get("text"))).append("\"");
 			}
