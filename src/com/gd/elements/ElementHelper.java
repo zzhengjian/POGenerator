@@ -14,10 +14,11 @@ public class ElementHelper {
 	private String text;
 	private String tagName;
 	private boolean usingId = true;
+	private boolean usingName = true;
 	private boolean usingClassName = true;
 	private boolean usingDataContent = false;
 	
-	private static String ElementName;
+	private String ElementName;
 
 	public ElementHelper(WebElement oWebElement)
 	{
@@ -27,18 +28,21 @@ public class ElementHelper {
 	}
 	
 	
-	public static String getElementName() {
+	public String getElementName() {
 		return ElementName;
 	}
 
-	public static void setElementName(String elementName) {
+	public void setElementName(String elementName) {
 		ElementName = elementName;
 	}
-	
+
+	public String getText() {
+		return text;
+	}
+
 	public boolean isUsingId() {
 		return usingId;
 	}
-
 
 
 	public void setUsingId(boolean usingId) {
@@ -46,6 +50,15 @@ public class ElementHelper {
 	}
 
 
+	public boolean isUsingName() {
+		return usingName;
+	}
+
+
+	public void setUsingName(boolean usingName) {
+		this.usingName = usingName;
+	}
+	
 
 	public boolean isUsingClassName() {
 		return usingClassName;
@@ -77,11 +90,12 @@ public class ElementHelper {
 		
 		if(tagName.matches("a|p|label|span|button|li|strong|h[1-9]|em|b") && text != null && !text.trim().equals(""))
 		{
-			Pattern pattern = Pattern.compile("[a-zA-Z0-9]+",Pattern.DOTALL);
+			Pattern pattern = Pattern.compile("[a-zA-Z0-9\u4e00-\u9fa5]+",Pattern.DOTALL);
 			Matcher matcher = pattern.matcher(text);
 			if(matcher.find())
 			{
-				setUsingId(false);				
+				setUsingId(false);	
+				setUsingName(false);
 			}
 			
 		}	
@@ -91,7 +105,7 @@ public class ElementHelper {
 		{
 			elementName.append(Utils.evalName(id));
 		}			
-		else if(name != null && !name.equals(""))
+		else if(name != null && !name.equals("") && isUsingName())
 		{
 			elementName.append(Utils.evalName(name));
 		}						
@@ -113,7 +127,7 @@ public class ElementHelper {
 			elementName.append("Element");
 		}
 
-		return elementName.toString();
+		return elementName.toString() + elementNameExt();
 	}
 	
 
@@ -196,7 +210,7 @@ public class ElementHelper {
 	{
 		ArrayList<String> xpathArr = new ArrayList<String>();
 		
-		xpathArr.add(".//*[not(ancestor::table)][normalize-space(translate(text(),' ',' '))][not(ancestor::select)][not(self::sup)]|.//input[not(ancestor::table)][@type!='hidden']|(.//img|.//select|.//i|.//a|.//h1|.//h2|.//h3|.//h4)[not(ancestor::table)]");		
+		xpathArr.add(".//*[not(ancestor::table)][normalize-space(translate(text(),' ',' '))][not(ancestor::select)][not(self::sup)][not(self::iframe)][not(self::frame)]|.//input[not(ancestor::table)][@type!='hidden']|(.//img|.//select|.//i|.//a|.//h1|.//h2|.//h3|.//h4)[not(ancestor::table)]");		
 		return xpathArr;
 	}
 	
@@ -204,7 +218,7 @@ public class ElementHelper {
 	
 	public String addNewGDElement(String pageName, String selector)
 	{
-		String elementName = evaluateElementName() + elementNameExt();
+		String elementName = evaluateElementName();
 
 		return updateGDElement(pageName, elementName, selector);
 	}
@@ -239,7 +253,8 @@ public class ElementHelper {
 		//if element has more than 2 child elements, we can skip to add it's text
 		return oWebElement.findElements(By.xpath(".//*")).size() > 2;
 	}
-	
+
+
 
 	
 	

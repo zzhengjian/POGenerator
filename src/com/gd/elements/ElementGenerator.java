@@ -2,26 +2,23 @@ package com.gd.elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.BeanToJsonConverter;
 import org.openqa.selenium.remote.Command;
 import org.openqa.selenium.remote.DriverCommand;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.gd.elements.PageHelper.Projects;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 
 public class ElementGenerator {
 	
@@ -31,7 +28,7 @@ public class ElementGenerator {
 	public void GeneratePageObject(WebDriver oWebDriver) {
 		// TODO Auto-generated method stub
 		url = Property.url;
-		WebDriverWait wait = new WebDriverWait(oWebDriver, 20000);
+		WebDriverWait wait = new WebDriverWait(oWebDriver, 50000);
 		wait.until(PageHelper.pageLoaded(oWebDriver));
 		List<WebElement> allElements = new ArrayList<WebElement>();
 		List<WebElement> elements = oWebDriver.findElements(Utils.getBy(Property.parentNodeLocator));
@@ -39,15 +36,14 @@ public class ElementGenerator {
 		{
 			allElements.addAll(oWebDriver.findElement(Utils.getBy(Property.parentNodeLocator)).findElements(By.xpath(xpath)));
 		}
-		
-		StringBuilder spage = new StringBuilder();
+
 		String pageName = Property.pageFileName.equals("") ? PageHelper.generatePageNameWithUrl(url) : Property.pageFileName;
-		PageHelper.buildTopPageLine(spage, url);
+		PageBean page = new PageBean(url,pageName);
 		for(WebElement e : allElements)
 		{
 			if(e.isDisplayed())
 			{
-
+				System.out.println(e.getTagName() + " : " +  e.getText());
 				Response response = null;
 				String selector = "";
 				Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
@@ -56,20 +52,38 @@ public class ElementGenerator {
 					selector = (String)response.getValue();
 				} catch (IOException e1) {
 					e1.printStackTrace();
+				} catch (ClassCastException e2)
+				{
+					e2.printStackTrace();
 				}
+				
 				
 				if("".equals(selector))
 				{
 					continue;
 				}
-				ElementHelper elementHelper = new ElementHelper(e);				
-				spage.append(elementHelper.addNewGDElement(pageName, selector));
+				
+				
+				
+				ElementHelper elementHelper = new ElementHelper(e);
+				String elementName = elementHelper.evaluateElementName();
+				
+				//store elements to a data model
+				ElementBean ele = new ElementBean(elementName, selector);
+				if(!"".equals(elementHelper.getText()))
+				{
+					ele.addDefaultValue("text", elementHelper.getText());
+				}
+				page.addElement(ele);
 			}
 				
 		}
-		spage.append("Pages.addPage(\"").append(pageName).append("\", ").append(pageName).append(")");
-		System.out.println(spage.toString());
+	
+		Save save = new Save(page);
+		save.toCucumber();
 		
+		
+
 		//store page to a file
 		try {
 			String SavePath = Property.SaveToPath.equals("") ? Property.DefaultPath : Property.SaveToPath;
@@ -95,7 +109,7 @@ public class ElementGenerator {
 				pagefile.delete();				
 			}
 		
-			FileUtils.writeStringToFile(pagefile, spage.toString(), "utf-8");
+			FileUtils.writeStringToFile(pagefile, save.getPageStream().toString(), "utf-8");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

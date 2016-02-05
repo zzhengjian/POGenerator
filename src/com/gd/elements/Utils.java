@@ -48,7 +48,7 @@ public class Utils {
 	 * */
 	public static String evalName(String text)
 	{
-		Pattern pattern = Pattern.compile("[a-zA-Z0-9]+",Pattern.DOTALL);
+		Pattern pattern = Pattern.compile("[a-zA-Z0-9\u4e00-\u9fa5]+",Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(text);
 		
 		StringBuilder _text = new StringBuilder("");
