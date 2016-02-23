@@ -97,7 +97,7 @@ public class POGen {
 				{
 					FirefoxProfile profile = new FirefoxProfile();					
 					oWebDriver = new FirefoxDriver();
-					oWebDriver.manage().timeouts().pageLoadTimeout(5000, TimeUnit.MILLISECONDS);
+					oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
 					btnStartFirefox.setText("Stop Firefox");				
 				}
 				else

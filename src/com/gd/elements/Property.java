@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
+import com.gd.constant.PageObjectType;
+
 
 public class Property {
 	
@@ -17,6 +19,7 @@ public class Property {
 	public static String parentNodeLocator = "//body";
 	public static String SaveToPath = "";
 	public static String pageFileName = "";
+	public static int PageObject_Type;
 
 	private static Properties setting = new Properties();
 	
@@ -43,15 +46,17 @@ public class Property {
 		//load properties
 		try {
 			setting.load(new BufferedReader(new FileReader(new File(DefaultPath, "Setting.Properties"))));
-			parentNodeLocator = setting.getProperty("parentNodeLocator", "");
-			SaveToPath = DefaultPath;
-			System.out.println(parentNodeLocator);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
+		
+		parentNodeLocator = setting.getProperty("parentNodeLocator", "");
+		PageObject_Type = Integer.parseInt(setting.getProperty("PageObjectType", String.valueOf(PageObjectType.PAGEOBJECT_IN_CUCUMBER)));
+		SaveToPath = DefaultPath;
+		System.out.println(parentNodeLocator);
 	}
-
+	
 }

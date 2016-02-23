@@ -2,13 +2,11 @@ package com.gd.elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 public class PageHelper {
@@ -17,8 +15,6 @@ public class PageHelper {
 	public String WorkspacePath = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects";
 	private String PageName;
 	private String Url;
-	private HashMap<String, String> Elements = new HashMap<String, String>();
-
 	
 	public String getPageName() {
 		return PageName;

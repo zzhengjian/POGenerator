@@ -1,5 +1,8 @@
 package com.gd.elements;
 
+import java.io.File;
+
+import com.gd.constant.PageObjectType;
 import com.gd.elements.Utils;
 import com.google.gson.Gson;
 
@@ -16,6 +19,33 @@ public class Save {
 	public Save(PageBean page)
 	{
 		this.page = page;
+	}
+	
+	public File toPageObjectFile(String path, int type)
+	{
+		File file = null;
+		switch(type)
+		{
+			case PageObjectType.PAGEOBJECT_IN_CUCUMBER:
+				toCucumber();
+				file = new File(path, page.getPageName() + ".rb");
+				break;
+			case PageObjectType.PAGEOBJECT_IN_JAVA:
+				toPOM();
+				file = new File(path, page.getPageName() + ".java");
+				break;
+			case PageObjectType.PAGEOBJECT_IN_JSON:
+				toJsonFile();
+				file = new File(path, page.getPageName() + ".json");
+				break;
+			default:
+				toCucumber();
+				file = new File(path, page.getPageName() + ".rb");
+				break;
+		}
+		return file;
+		
+		
 	}
 	
 	public void toCucumber()

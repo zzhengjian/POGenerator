@@ -17,6 +17,7 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.gd.constant.PageObjectType;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
@@ -77,10 +78,7 @@ public class ElementGenerator {
 				
 		}
 	
-		Save save = new Save(page);
-		save.toCucumber();
-		
-		
+			
 
 		//store page to a file
 		try {
@@ -100,8 +98,10 @@ public class ElementGenerator {
 				}					
 			}
 			
+			Save save = new Save(page);
+			File pagefile = save.toPageObjectFile(SavePath, Property.PageObject_Type);	
 			//delete file if already exists
-			File pagefile = new File(SavePath, "" + pageName + ".rb");
+			//File pagefile = new File(SavePath, "" + pageName + ".rb");
 			if(pagefile.exists())
 			{
 				pagefile.delete();				
