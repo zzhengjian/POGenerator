@@ -41,9 +41,10 @@ public class ElementGenerator {
 		PageBean page = new PageBean(url,pageName);
 		for(WebElement e : allElements)
 		{
+			
 			if(e.isDisplayed())
 			{
-				//System.out.println(e.getTagName() + " : " +  e.getText());
+
 				Response response = null;
 				String selector = "";
 				Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
@@ -55,27 +56,24 @@ public class ElementGenerator {
 				} catch (ClassCastException e2)
 				{
 					e2.printStackTrace();
-				}
-				
+				}				
 				
 				if("".equals(selector))
 				{
 					continue;
-				}
-				
-				
+				}				
 				
 				ElementHelper elementHelper = new ElementHelper(e);
 				String elementName = elementHelper.evaluateElementName();
 				
 				//store elements to a data model
 				ElementBean ele = new ElementBean(elementName, selector);
-				if(!"".equals(elementHelper.getText()))
+				if(!"".equals(elementHelper.getText()) && !e.getTagName().toLowerCase().matches("select"))
 				{
 					ele.addDefaultValue("text", elementHelper.getText());
 				}
 				page.addElement(ele);
-			}
+			}			
 				
 		}
 	
