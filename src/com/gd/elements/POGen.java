@@ -12,10 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class POGen {
@@ -82,7 +80,7 @@ public class POGen {
 				Property.SaveToPath = filePathTextField.getText();
 				Property.url = urlTextField.getText();
 				Property.pageFileName = fileNameTextField.getText();
-				new ElementGenerator().GeneratePageObject(oWebDriver);
+				new ElementGenerator(oWebDriver).GeneratePageObject();
 			}
 		});
 		btnRun.setBounds(10, 198, 91, 23);
@@ -94,8 +92,7 @@ public class POGen {
 			public void mouseClicked(MouseEvent arg0) {					
 				
 				if(btnStartFirefox.getText().toLowerCase().contains("start"))
-				{
-					FirefoxProfile profile = new FirefoxProfile();					
+				{			
 					oWebDriver = new FirefoxDriver();
 					oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
 					btnStartFirefox.setText("Stop Firefox");				
@@ -146,15 +143,6 @@ public class POGen {
 					oWebDriver.get(Property.url);
 					WebDriverWait wait = new WebDriverWait(oWebDriver, 20000);
 					wait.until(PageHelper.pageLoaded(oWebDriver));
-					String className = 	oWebDriver.findElement(By.xpath("//html")).getAttribute("class");
-					if(className!=null && className.toLowerCase().contains("flex"))
-					{
-						PageHelper.isFlex = true;						
-					}
-					else
-					{
-						PageHelper.isFlex = false;
-					}
 					fileNameTextField.setText(PageHelper.generatePageNameWithUrl(Property.url));
 				}
 			}

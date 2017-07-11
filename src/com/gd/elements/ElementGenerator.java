@@ -2,6 +2,7 @@ package com.gd.elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,26 +10,28 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.BeanToJsonConverter;
-import org.openqa.selenium.remote.Command;
-import org.openqa.selenium.remote.DriverCommand;
-import org.openqa.selenium.remote.RemoteWebElement;
-import org.openqa.selenium.remote.Response;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.gd.constant.PageObjectType;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 public class ElementGenerator {
 	
 	private String url;
-
 	
-	public void GeneratePageObject(WebDriver oWebDriver) {
+	private WebDriver oWebDriver;
+	
+	
+	public ElementGenerator(WebDriver oWebDriver) {
+		this.oWebDriver = oWebDriver;
+	}
+
+
+	public void GeneratePageObject() {
 		// TODO Auto-generated method stub
 		url = Property.url;
+		String selector = "";
 		WebDriverWait wait = new WebDriverWait(oWebDriver, 50000);
 		wait.until(PageHelper.pageLoaded(oWebDriver));
 		List<WebElement> allElements = new ArrayList<WebElement>();
@@ -40,24 +43,13 @@ public class ElementGenerator {
 
 		String pageName = Property.pageFileName.equals("") ? PageHelper.generatePageNameWithUrl(url) : Property.pageFileName;
 		PageBean page = new PageBean(url,pageName);
+		
 		for(WebElement e : allElements)
 		{
 			
 			if(e.isDisplayed())
 			{
-
-				Response response = null;
-				String selector = "";
-				Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
-				try {
-					response = ((FirefoxDriver)oWebDriver).getCommandExecutor().execute(command);
-					selector = (String)response.getValue();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassCastException e2)
-				{
-					e2.printStackTrace();
-				}				
+				selector = getSelectorFromElement(e);				
 				
 				if("".equals(selector))
 				{
@@ -114,5 +106,27 @@ public class ElementGenerator {
 		}
 	}
 
+	private String getSelectorFromElement(WebElement e) {		
+		
+		
+		String selector = "";
+		String getselectorjs = readScriptImpl("/com/gd/pogen/resources/getSelector.js");
+		selector = (String) ((RemoteWebDriver) oWebDriver).executeScript(getselectorjs + " return utils.getCssSelectorFromNode(arguments[0]);", e);
+		
+		return selector;
+	}
+	
+	private static  String readScriptImpl(String script) {
+	    URL url = ElementGenerator.class.getResource(script);
 
+	    if (url == null) {
+	      throw new RuntimeException("Cannot locate " + script);
+	    }
+
+	    try {
+	      return Resources.toString(url, Charsets.UTF_8);
+	    } catch (IOException e) {
+	      throw new RuntimeException(e);
+	    }
+	  }	
 }

@@ -1,14 +1,12 @@
 package com.gd.elements;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import com.gd.constant.PageObjectType;
+import org.apache.commons.io.FileUtils;
 
 
 public class Property {
@@ -19,10 +17,8 @@ public class Property {
 	public static String parentNodeLocator = "//body";
 	public static String SaveToPath = "";
 	public static String pageFileName = "";
-	public static int PageObject_Type;
+	public static int PageObject_Type = 3;
 
-	private static Properties setting = new Properties();
-	
 	public static void SetUp()
 	{
 		
@@ -32,31 +28,25 @@ public class Property {
 			DefaultPath = new File(".").getAbsolutePath();
 			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
 			{
-				DefaultPath = "C:/QA/POGen";
-			}
-			
-			File fxdriver = new File(DefaultPath, "webdriver.xpi");
-			System.setProperty("webdriver.firefox.driver", fxdriver.getAbsolutePath());
-			
-			System.out.println(fxdriver.getAbsolutePath());
+				File temp = Paths.get(System.getProperty("user.home"), "PoGen").toFile();
+				// create directory if needed
+			    if (!Files.exists(temp.toPath())) {
+			        try {
+						FileUtils.forceMkdir(temp);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			    
+			    DefaultPath = temp.getAbsolutePath();
+			    SaveToPath = DefaultPath;
+			}			
+
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//load properties
-		try {
-			setting.load(new BufferedReader(new FileReader(new File(DefaultPath, "Setting.Properties"))));
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-		
-		parentNodeLocator = setting.getProperty("parentNodeLocator", "");
-		PageObject_Type = Integer.parseInt(setting.getProperty("PageObjectType", String.valueOf(PageObjectType.PAGEOBJECT_IN_CUCUMBER)));
-		SaveToPath = DefaultPath;
-		System.out.println(parentNodeLocator);
 	}
 	
 }

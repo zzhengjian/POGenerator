@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 public class PageBean {
 	
-	public static String Platform;
-
 	private String pageName;
 	private String url;
 
