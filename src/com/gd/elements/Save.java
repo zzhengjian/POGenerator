@@ -61,10 +61,16 @@ public class Save {
 			pageStream.append(page.getPageName());
 			pageStream.append(".addElement(\"").append(ele.getElementName()).append("\",").append("\n");
 			pageStream.append("	GdElement.new(").append("\n");
-			if(Utils.isXpath(selector))
-				pageStream.append("		:desktopxpath => \"").append(selector).append("\"");
-			else
-				pageStream.append("		:desktopcss => \"").append(selector).append("\"");
+			if(Utils.isXpath(selector)){
+				pageStream.append("		:desktopxpath => \"").append(selector).append("\"").append(",\n");
+				pageStream.append("		:rwdxpath => \"").append(selector).append("\"");
+			}
+
+			else{
+				pageStream.append("		:desktopcss => \"").append(selector).append("\"").append(",\n");
+				pageStream.append("		:rwdcss => \"").append(selector).append("\"");
+			}
+				
 			
 			if(ele.getDefaultValues() !=null && ele.getDefaultValues().containsKey("text") && ele.getDefaultValues().get("text") !=null )
 			{

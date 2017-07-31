@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class POGen {
@@ -86,23 +86,24 @@ public class POGen {
 		btnRun.setBounds(10, 198, 91, 23);
 		frame.getContentPane().add(btnRun);
 		
-		final JButton btnStartFirefox = new JButton("Start Firefox");
+		final JButton btnStartFirefox = new JButton("Start Chrome");
 		btnStartFirefox.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {					
 				
 				if(btnStartFirefox.getText().toLowerCase().contains("start"))
 				{			
-					oWebDriver = new FirefoxDriver();
+					oWebDriver = new ChromeDriver();
+					System.out.println(((ChromeDriver)oWebDriver).getCapabilities().asMap());
 					oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
-					btnStartFirefox.setText("Stop Firefox");				
+					btnStartFirefox.setText("Stop Chrome");				
 				}
 				else
 				{		
 					if(oWebDriver!=null)
 					{
 						oWebDriver.quit();
-						btnStartFirefox.setText("Start Firefox");	
+						btnStartFirefox.setText("Start Chrome");	
 					}					
 				}
 			}

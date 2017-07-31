@@ -76,7 +76,7 @@ public class PageHelper {
 		else if(url.contains("pos"))
 			return Projects.FSC;
 		else 
-			throw new WebDriverException("Not implemented project");
+			return Projects.Other;
 		
 	}
 
@@ -110,6 +110,7 @@ public class PageHelper {
 		FSC,
 		Nascar,
 		Rush,
+		Other
 	}
 	
 	public void writeToFile(String pageText)

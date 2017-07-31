@@ -49,7 +49,7 @@ public class ElementGenerator {
 			
 			if(e.isDisplayed())
 			{
-				selector = getSelectorFromElement(e);				
+				selector = getSelectorFromElement(e);			
 				
 				if("".equals(selector))
 				{
@@ -93,7 +93,6 @@ public class ElementGenerator {
 			Save save = new Save(page);
 			File pagefile = save.toPageObjectFile(SavePath, Property.PageObject_Type);	
 			//delete file if already exists
-			//File pagefile = new File(SavePath, "" + pageName + ".rb");
 			if(pagefile.exists())
 			{
 				pagefile.delete();				
@@ -111,7 +110,13 @@ public class ElementGenerator {
 		
 		String selector = "";
 		String getselectorjs = readScriptImpl("/com/gd/pogen/resources/getSelector.js");
-		selector = (String) ((RemoteWebDriver) oWebDriver).executeScript(getselectorjs + " return utils.getCssSelectorFromNode(arguments[0]);", e);
+		try {
+			selector = (String) ((RemoteWebDriver) oWebDriver).executeScript(getselectorjs + " return utils.getCssSelectorFromNode(arguments[0]);", e);
+		} catch (Exception e1) {
+			
+			System.err.println("generate selector for element fail");
+			System.err.println("ignore exceptions");
+		}
 		
 		return selector;
 	}
